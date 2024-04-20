@@ -3,13 +3,15 @@
 # ------------------------------------------------------
 
 type Mutation {
+  deleteUser(userID: String!): User!
   registerUser(registerUserInput: RegisterUserInput!): User!
   signInUser(authInput: SignInUserInput!): Token!
   updateUser(updateUserInput: UpdateUserInput!, userID: String!): User!
 }
 
 type Query {
-  findAll: String!
+  findAllUsers: [User!]!
+  findSingleUser(userID: String!): User!
 }
 
 input RegisterUserInput {

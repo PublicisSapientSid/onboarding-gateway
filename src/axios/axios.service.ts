@@ -9,8 +9,10 @@ export class AxiosService {
     this.axiosInstance = axios.create();
   }
 
-  async axiosGet<T>(baseURL: string): Promise<T> {
-    const response: AxiosResponse<T> = await this.axiosInstance.get(baseURL);
+  async axiosGet<T>(baseURL: string, headers?: any): Promise<T> {
+    const response: AxiosResponse<T> = await this.axiosInstance.get(baseURL, {
+      headers,
+    });
     return response.data;
   }
 
@@ -27,6 +29,16 @@ export class AxiosService {
       baseURL,
       data,
       { headers },
+    );
+    return response.data;
+  }
+
+  async axiosDelete<T>(baseURL: string, headers?: any): Promise<T> {
+    const response: AxiosResponse<T> = await this.axiosInstance.delete(
+      baseURL,
+      {
+        headers,
+      },
     );
     return response.data;
   }

@@ -10,8 +10,60 @@ import { UpdateUserInput } from './dto/update-user.input copy';
 export class UserService {
   constructor(private readonly axiosService: AxiosService) {}
 
-  findAll(): string {
-    return `This action returns all user`;
+  async findAllUsers({
+    headers,
+  }: {
+    headers: {
+      authorization: string;
+    };
+  }): Promise<User[]> {
+    const { authorization } = headers;
+
+    return this.axiosService.axiosGet('http://localhost:3000/user', {
+      authorization,
+    });
+  }
+
+  async findSingleUser(
+    usedID: string,
+    {
+      headers,
+    }: {
+      headers: {
+        authorization: string;
+      };
+    },
+  ): Promise<User> {
+    const { authorization } = headers;
+
+    return this.axiosService.axiosGet('http://localhost:3000/user/' + usedID, {
+      authorization,
+    });
+  }
+
+  async registerUser({
+    email,
+    isAdmin = false,
+    password,
+    role,
+    service,
+    username,
+  }: RegisterUserInput): Promise<User> {
+    return this.axiosService.axiosPost('http://localhost:3000/user/register', {
+      email,
+      isAdmin,
+      password,
+      role,
+      service,
+      username,
+    });
+  }
+
+  async signInUser({ username, password }: SignInUserInput): Promise<Token> {
+    return this.axiosService.axiosPost('http://localhost:3000/user/signin', {
+      username,
+      password,
+    });
   }
 
   async updateUser(
@@ -50,28 +102,23 @@ export class UserService {
     );
   }
 
-  async registerUser({
-    email,
-    isAdmin = false,
-    password,
-    role,
-    service,
-    username,
-  }: RegisterUserInput): Promise<User> {
-    return this.axiosService.axiosPost('http://localhost:3000/user/register', {
-      email,
-      isAdmin,
-      password,
-      role,
-      service,
-      username,
-    });
-  }
+  async deleteUser(
+    usedID: string,
+    {
+      headers,
+    }: {
+      headers: {
+        authorization: string;
+      };
+    },
+  ): Promise<User> {
+    const { authorization } = headers;
 
-  async signInUser({ username, password }: SignInUserInput): Promise<Token> {
-    return this.axiosService.axiosPost('http://localhost:3000/user/signin', {
-      username,
-      password,
-    });
+    return this.axiosService.axiosDelete(
+      'http://localhost:3000/user/' + usedID,
+      {
+        authorization,
+      },
+    );
   }
 }
