@@ -1,0 +1,52 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Mutation {
+  registerUser(registerUserInput: RegisterUserInput!): User!
+  signInUser(authInput: SignInUserInput!): Token!
+  updateUser(updateUserInput: UpdateUserInput!, userID: String!): User!
+}
+
+type Query {
+  findAll: String!
+}
+
+input RegisterUserInput {
+  email: String!
+  isAdmin: Boolean
+  password: String!
+  role: String!
+  service: String!
+  username: String!
+}
+
+input SignInUserInput {
+  password: String!
+  username: String!
+}
+
+type Token {
+  """Example field (placeholder)"""
+  access_token: String!
+}
+
+input UpdateUserInput {
+  email: String
+  isAdmin: Boolean
+  password: String
+  role: String
+  service: String
+  username: String
+}
+
+type User {
+  airlines: [String!]!
+  email: String!
+  hotels: [String!]!
+  isAdmin: Boolean!
+  password: String!
+  role: String!
+  service: String!
+  username: String!
+}
