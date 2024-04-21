@@ -7,6 +7,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { HotelModule } from './hotel/hotel.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { HotelModule } from './hotel/hotel.module';
       },
     ]),
     HotelModule,
+    ConfigModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,9 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Observable, map } from 'rxjs';
+import { Observable, firstValueFrom, map } from 'rxjs';
 import { Hotel } from './entities/hotel.entity';
 import { CreateHotelInput } from './dto/create-hotel.input';
 import { UpdateHotelInput } from './dto/update-hotel.input';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class HotelService {
@@ -12,6 +13,7 @@ export class HotelService {
     private readonly hotelServiceClient: ClientProxy,
     @Inject('OPERATOR_SERVICE')
     private readonly operatorServiceClient: ClientProxy,
+    private readonly jwtService: JwtService,
   ) {}
 
   async findAllHotels({
@@ -23,14 +25,35 @@ export class HotelService {
   }): Promise<Observable<Hotel[]>> {
     const { authorization } = headers;
 
-    return this.hotelServiceClient
-      .send('findAllHotels', { authorization })
-      .pipe(
-        map((response: any) => {
-          console.log({ authorization });
-          return response;
-        }),
-      );
+    const userInfo = this.jwtService.decode(
+      authorization.replace('Bearer ', ''),
+    );
+
+    if (!authorization || !userInfo?.sub) {
+      throw new HttpException('Unauthorized', 401);
+    }
+
+    const foundUser = await firstValueFrom(
+      this.operatorServiceClient.send('findOne', {
+        userID: userInfo?.sub,
+        authorization,
+      }),
+    );
+
+    console.log({ foundUser });
+
+    if (!foundUser) {
+      throw new HttpException('User not found', 404);
+    }
+    if (!foundUser.isAdmin) {
+      throw new HttpException('Not authorized', 401);
+    }
+
+    return this.hotelServiceClient.send('findAllHotels', {}).pipe(
+      map((response: any) => {
+        return response;
+      }),
+    );
   }
 
   async findHotel(
@@ -44,6 +67,30 @@ export class HotelService {
     },
   ): Promise<Observable<Hotel>> {
     const { authorization } = headers;
+
+    const userInfo = this.jwtService.decode(
+      authorization.replace('Bearer ', ''),
+    );
+
+    if (!authorization || !userInfo?.sub) {
+      throw new HttpException('Unauthorized', 401);
+    }
+
+    const foundUser = await firstValueFrom(
+      this.operatorServiceClient.send('findOne', {
+        userID: userInfo?.sub,
+        authorization,
+      }),
+    );
+
+    console.log({ foundUser });
+
+    if (!foundUser) {
+      throw new HttpException('User not found', 404);
+    }
+    if (!foundUser.isAdmin) {
+      throw new HttpException('Not authorized', 401);
+    }
 
     return this.hotelServiceClient
       .send('findHotel', { hotelID, authorization })

@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { HotelService } from './hotel.service';
 import { HotelResolver } from './hotel.resolver';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   providers: [HotelResolver, HotelService],
@@ -24,6 +26,10 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         },
       },
     ]),
+    ConfigModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+    }),
   ],
 })
 export class HotelModule {}
