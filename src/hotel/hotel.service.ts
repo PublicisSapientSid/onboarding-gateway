@@ -9,6 +9,8 @@ import { UpdateHotelInput } from './dto/update-hotel.input';
 export class HotelService {
   constructor(
     @Inject('HOTEL_SERVICE')
+    private readonly hotelServiceClient: ClientProxy,
+    @Inject('OPERATOR_SERVICE')
     private readonly operatorServiceClient: ClientProxy,
   ) {}
 
@@ -21,10 +23,11 @@ export class HotelService {
   }): Promise<Observable<Hotel[]>> {
     const { authorization } = headers;
 
-    return this.operatorServiceClient
+    return this.hotelServiceClient
       .send('findAllHotels', { authorization })
       .pipe(
         map((response: any) => {
+          console.log({ authorization });
           return response;
         }),
       );
@@ -42,7 +45,7 @@ export class HotelService {
   ): Promise<Observable<Hotel>> {
     const { authorization } = headers;
 
-    return this.operatorServiceClient
+    return this.hotelServiceClient
       .send('findHotel', { hotelID, authorization })
       .pipe(
         map((response: any) => {
@@ -54,13 +57,11 @@ export class HotelService {
   async createHotel(
     createHotelInput: CreateHotelInput,
   ): Promise<Observable<Hotel>> {
-    return this.operatorServiceClient
-      .send('createHotel', createHotelInput)
-      .pipe(
-        map((response: any) => {
-          return response;
-        }),
-      );
+    return this.hotelServiceClient.send('createHotel', createHotelInput).pipe(
+      map((response: any) => {
+        return response;
+      }),
+    );
   }
 
   async updateHotel(
@@ -76,7 +77,7 @@ export class HotelService {
   ): Promise<Observable<Hotel>> {
     const { authorization } = headers;
 
-    return this.operatorServiceClient
+    return this.hotelServiceClient
       .send('updateHotel', { hotelID, updateHotelInput, authorization })
       .pipe(
         map((response: any) => {
@@ -97,7 +98,7 @@ export class HotelService {
   ): Promise<Observable<Hotel>> {
     const { authorization } = headers;
 
-    return this.operatorServiceClient
+    return this.hotelServiceClient
       .send('deleteHotel', { hotelID, authorization })
       .pipe(
         map((response: any) => {

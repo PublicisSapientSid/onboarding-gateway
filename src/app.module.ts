@@ -20,10 +20,18 @@ import { HotelModule } from './hotel/hotel.module';
       {
         name: 'OPERATOR_SERVICE',
         transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3031,
+        },
       },
       {
-        name: 'HOTEL_SERCVICE',
+        name: 'HOTEL_SERVICE',
         transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3032,
+        },
       },
     ]),
     HotelModule,

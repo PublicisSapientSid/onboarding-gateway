@@ -10,6 +10,18 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       {
         name: 'HOTEL_SERVICE',
         transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3032,
+        },
+      },
+      {
+        name: 'OPERATOR_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3031,
+        },
       },
     ]),
   ],
