@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserResolver } from './user.resolver';
-import { AxiosModule } from '../axios/axios.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   providers: [UserResolver, UserService],
-  imports: [AxiosModule],
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'OPERATOR_SERVICE',
+        transport: Transport.TCP,
+      },
+    ]),
+  ],
 })
 export class UserModule {}

@@ -6,12 +6,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AxiosModule } from './axios/axios.module';
 
 @Module({
   imports: [
     UserModule,
-    AxiosModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),

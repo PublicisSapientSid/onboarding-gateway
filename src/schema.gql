@@ -43,6 +43,7 @@ input UpdateUserInput {
 }
 
 type User {
+  _id: String!
   airlines: [String!]!
   email: String!
   hotels: [String!]!

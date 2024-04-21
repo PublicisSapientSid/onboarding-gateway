@@ -5,6 +5,9 @@ export class User {
   @Field(() => String)
   username: string;
 
+  @Field(() => String)
+  _id: string;
+
   @Field(() => Boolean)
   isAdmin: boolean;
 
