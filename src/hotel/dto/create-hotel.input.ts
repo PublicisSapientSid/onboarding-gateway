@@ -8,6 +8,7 @@ import {
   ArrayNotEmpty,
   IsArray,
 } from 'class-validator';
+import { RegisterUserInput } from '../../user/dto/register-user.input';
 
 @InputType()
 export class RoomType {
@@ -111,4 +112,8 @@ export class CreateHotelInput {
   @Field(() => [String], { nullable: true })
   @IsOptional()
   images: string[];
+
+  @Field(() => [RegisterUserInput], { nullable: true })
+  @IsOptional()
+  owner: RegisterUserInput;
 }

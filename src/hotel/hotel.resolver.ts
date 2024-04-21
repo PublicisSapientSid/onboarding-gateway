@@ -25,8 +25,9 @@ export class HotelResolver {
   @Mutation(() => Hotel)
   async createHotel(
     @Args('createHotelInput') createHotelInput: CreateHotelInput,
+    @Context('req') req: any,
   ): Promise<Observable<Hotel>> {
-    return this.hotelService.createHotel(createHotelInput);
+    return this.hotelService.createHotel(createHotelInput, req);
   }
 
   @Mutation(() => Hotel)

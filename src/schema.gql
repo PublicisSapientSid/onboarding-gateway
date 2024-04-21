@@ -21,6 +21,7 @@ input CreateHotelInput {
   latitude: Float
   longitude: Float
   name: String
+  owner: [RegisterUserInput!]
   phone: String!
   rating: Float
   shortname: String
@@ -43,6 +44,7 @@ type Hotel {
   latitude: String!
   longitude: String!
   name: String!
+  owner: User!
   phone: String!
   rating: Int!
   shortname: String!
