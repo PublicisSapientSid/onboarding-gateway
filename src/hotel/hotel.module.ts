@@ -4,6 +4,7 @@ import { HotelResolver } from './hotel.resolver';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { AxiosModule } from '../axios/axios.module';
 
 @Module({
   providers: [HotelResolver, HotelService],
@@ -30,6 +31,7 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),
+    AxiosModule,
   ],
 })
 export class HotelModule {}

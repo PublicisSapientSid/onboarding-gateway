@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { Token } from './entities/token.entity';
 import { SignInUserInput } from './dto/sign-in-user.input';
 import { User } from './entities/user.entity';

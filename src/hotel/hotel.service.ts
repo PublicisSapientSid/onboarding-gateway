@@ -1,20 +1,59 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable, firstValueFrom, map, tap } from 'rxjs';
 import { Hotel } from './entities/hotel.entity';
 import { CreateHotelInput } from './dto/create-hotel.input';
 import { UpdateHotelInput } from './dto/update-hotel.input';
 import { JwtService } from '@nestjs/jwt';
+import { AxiosService } from '../axios/axios.service';
 
 @Injectable()
-export class HotelService {
+export class HotelService implements OnModuleInit {
   constructor(
     @Inject('HOTEL_SERVICE')
     private readonly hotelServiceClient: ClientProxy,
     @Inject('OPERATOR_SERVICE')
     private readonly operatorServiceClient: ClientProxy,
     private readonly jwtService: JwtService,
+    private readonly axiosService: AxiosService,
   ) {}
+
+  async onModuleInit() {
+    const coldStartHotelList = (await this.axiosService.retryAxiosGet(
+      'http://localhost:3005/hotel',
+    )) as Hotel[];
+    const superuser = {
+      username: process.env.COLD_START_USER,
+      password: process.env.COLD_START_PASSWORD,
+      email: process.env.COLD_START_EMAIL,
+      role: process.env.COLD_START_ROLE,
+      service: process.env.COLD_START_SERVICE,
+      isAdmin: (process.env.COLD_START_ROLE = 'admin'),
+      hotels: coldStartHotelList,
+    };
+    await firstValueFrom(
+      this.operatorServiceClient.send('coldStart', superuser).pipe(
+        map(async (response: any) => {
+          const { password: _, ...superUser } = response;
+          coldStartHotelList.forEach((hotel) => {
+            hotel.owner = superUser;
+          });
+          await firstValueFrom(
+            this.hotelServiceClient.send('hotelsColdStart', {
+              createHotelInput: coldStartHotelList,
+              owner: superUser,
+            }),
+          );
+          return response;
+        }),
+      ),
+    );
+  }
 
   async findAllHotels({
     headers,
@@ -78,7 +117,7 @@ export class HotelService {
       .pipe(
         tap(async (response: any) => {
           const { owner, ...hotelInfo } = response;
-          const updatedOperator = await firstValueFrom(
+          await firstValueFrom(
             this.operatorServiceClient.send('update', {
               userID: foundUser._id,
               requestBody: { hotels: hotelInfo },
