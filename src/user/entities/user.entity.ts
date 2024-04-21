@@ -29,9 +29,3 @@ export class User {
   @Field(() => [String])
   airlines: string[];
 }
-
-@ObjectType()
-export class Temp {
-  @Field(() => String)
-  hello: string;
-}

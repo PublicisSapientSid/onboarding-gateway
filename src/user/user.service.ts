@@ -3,7 +3,7 @@ import { Token } from './entities/token.entity';
 import { SignInUserInput } from './dto/sign-in-user.input';
 import { User } from './entities/user.entity';
 import { RegisterUserInput } from './dto/register-user.input';
-import { UpdateUserInput } from './dto/update-user.input copy';
+import { UpdateUserInput } from './dto/update-user.input';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable, map } from 'rxjs';
 

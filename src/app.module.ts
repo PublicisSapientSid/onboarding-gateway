@@ -6,6 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { HotelModule } from './hotel/hotel.module';
 
 @Module({
   imports: [
@@ -20,7 +21,12 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         name: 'OPERATOR_SERVICE',
         transport: Transport.TCP,
       },
+      {
+        name: 'HOTEL_SERCVICE',
+        transport: Transport.TCP,
+      },
     ]),
+    HotelModule,
   ],
   controllers: [AppController],
   providers: [AppService],

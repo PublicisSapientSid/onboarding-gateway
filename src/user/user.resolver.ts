@@ -4,7 +4,7 @@ import { User } from './entities/user.entity';
 import { SignInUserInput } from './dto/sign-in-user.input';
 import { Token } from './entities/token.entity';
 import { RegisterUserInput } from './dto/register-user.input';
-import { UpdateUserInput } from './dto/update-user.input copy';
+import { UpdateUserInput } from './dto/update-user.input';
 import { Observable } from 'rxjs';
 
 @Resolver(() => User)
