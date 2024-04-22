@@ -42,16 +42,20 @@ export class UserService {
     username,
     password,
   }: SignInUserInput): Promise<Observable<Token>> {
-    return this.operatorServiceClient
-      .send('signIn', { username, password })
-      .pipe(
-        map((response: any) => {
-          const token: Token = {
-            access_token: response.access_token,
-          };
-          return token;
-        }),
-      );
+    try {
+      return this.operatorServiceClient
+        .send('signIn', { username, password })
+        .pipe(
+          map((response: any) => {
+            const token: Token = {
+              access_token: response.access_token,
+            };
+            return token;
+          }),
+        );
+    } catch (error) {
+      throw new Error('Failed to sign in user');
+    }
   }
 
   async findSingleUser(

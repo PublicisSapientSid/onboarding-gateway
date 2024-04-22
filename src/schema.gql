@@ -7,6 +7,11 @@ input Availability {
   date: String!
 }
 
+type AvailabilityEntity {
+  available_rooms: Float!
+  date: String!
+}
+
 input CreateHotelInput {
   address: String!
   amenities: [String!]
@@ -46,10 +51,10 @@ type Hotel {
   name: String!
   owner: User!
   phone: String!
-  rating: Int!
+  rating: Float!
   shortname: String!
   totalRooms: Int!
-  types: [String!]!
+  types: [RoomTypeEntity!]!
 }
 
 type Mutation {
@@ -80,6 +85,12 @@ input RegisterUserInput {
 
 input RoomType {
   availability: [Availability!]!
+  pricing: Float!
+  roomType: String!
+}
+
+type RoomTypeEntity {
+  availability: [AvailabilityEntity!]!
   pricing: Float!
   roomType: String!
 }
@@ -128,7 +139,7 @@ type User {
   _id: String!
   airlines: [String!]!
   email: String!
-  hotels: [String!]!
+  hotels: [Hotel!]!
   isAdmin: Boolean!
   password: String!
   role: String!

@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Hotel } from '../../hotel/entities/hotel.entity';
 
 @ObjectType()
 export class User {
@@ -23,8 +24,8 @@ export class User {
   @Field(() => String)
   role: string;
 
-  @Field(() => [String])
-  hotels: string[];
+  @Field(() => [Hotel])
+  hotels: Hotel[];
 
   @Field(() => [String])
   airlines: string[];

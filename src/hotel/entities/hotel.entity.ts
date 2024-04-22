@@ -2,6 +2,25 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { User } from '../../user/entities/user.entity';
 
 @ObjectType()
+export class RoomTypeEntity {
+  @Field(() => String)
+  roomType: string;
+
+  @Field(() => Number)
+  pricing: number;
+
+  @Field(() => [AvailabilityEntity])
+  availability: AvailabilityEntity[];
+}
+
+@ObjectType()
+class AvailabilityEntity {
+  @Field(() => String)
+  date: string;
+  @Field(() => Number)
+  available_rooms: number;
+}
+@ObjectType()
 export class Hotel {
   @Field(() => String)
   name: string;
@@ -27,7 +46,7 @@ export class Hotel {
   @Field(() => String)
   country: string;
 
-  @Field(() => Int)
+  @Field(() => Number)
   rating: number;
 
   @Field(() => [String])
@@ -48,8 +67,8 @@ export class Hotel {
   @Field(() => String)
   description: string;
 
-  @Field(() => [String])
-  types: string[];
+  @Field(() => [RoomTypeEntity])
+  types: RoomTypeEntity[];
 
   @Field(() => String)
   email: string;
