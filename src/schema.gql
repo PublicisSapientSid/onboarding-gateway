@@ -2,15 +2,75 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input Availability {
+  available_rooms: Float!
+  date: String!
+}
+
+type AvailabilityEntity {
+  available_rooms: Float!
+  date: String!
+}
+
+input CreateHotelInput {
+  address: String!
+  amenities: [String!]
+  city: String!
+  country: String!
+  description: String
+  email: String!
+  hasParking: Boolean
+  hasRestaurant: Boolean
+  hasSpa: Boolean
+  images: [String!]
+  latitude: Float
+  longitude: Float
+  name: String
+  owner: [RegisterUserInput!]
+  phone: String!
+  rating: Float
+  shortname: String
+  totalRooms: Float!
+  types: [RoomType!]!
+}
+
+type Hotel {
+  _id: String!
+  address: String!
+  amenities: [String!]!
+  city: String!
+  country: String!
+  description: String!
+  email: String!
+  hasParking: Boolean!
+  hasRestaurant: Boolean!
+  hasSpa: Boolean!
+  images: [String!]!
+  latitude: String!
+  longitude: String!
+  name: String!
+  owner: User!
+  phone: String!
+  rating: Float!
+  shortname: String!
+  totalRooms: Int!
+  types: [RoomTypeEntity!]!
+}
+
 type Mutation {
+  createHotel(createHotelInput: CreateHotelInput!): Hotel!
+  deleteHotel(hotelID: String!): Hotel!
   deleteUser(userID: String!): User!
   registerUser(registerUserInput: RegisterUserInput!): User!
   signInUser(authInput: SignInUserInput!): Token!
+  updateHotel(hotelID: String!, updateHotelInput: UpdateHotelInput!): Hotel!
   updateUser(updateUserInput: UpdateUserInput!, userID: String!): User!
 }
 
 type Query {
+  findAllHotels: [Hotel!]!
   findAllUsers: [User!]!
+  findHotel(hotelID: String!): Hotel!
   findSingleUser(userID: String!): User!
 }
 
@@ -23,6 +83,18 @@ input RegisterUserInput {
   username: String!
 }
 
+input RoomType {
+  availability: [Availability!]!
+  pricing: Float!
+  roomType: String!
+}
+
+type RoomTypeEntity {
+  availability: [AvailabilityEntity!]!
+  pricing: Float!
+  roomType: String!
+}
+
 input SignInUserInput {
   password: String!
   username: String!
@@ -31,6 +103,27 @@ input SignInUserInput {
 type Token {
   """Example field (placeholder)"""
   access_token: String!
+}
+
+input UpdateHotelInput {
+  address: String
+  amenities: [String!]
+  city: String
+  country: String
+  description: String
+  email: String
+  hasParking: Boolean
+  hasRestaurant: Boolean
+  hasSpa: Boolean
+  images: [String!]
+  latitude: Float
+  longitude: Float
+  name: String
+  phone: String
+  rating: Float
+  shortname: String
+  totalRooms: Float
+  types: [RoomType!]
 }
 
 input UpdateUserInput {
@@ -46,7 +139,7 @@ type User {
   _id: String!
   airlines: [String!]!
   email: String!
-  hotels: [String!]!
+  hotels: [Hotel!]!
   isAdmin: Boolean!
   password: String!
   role: String!

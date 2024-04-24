@@ -3,7 +3,7 @@ import { Token } from './entities/token.entity';
 import { SignInUserInput } from './dto/sign-in-user.input';
 import { User } from './entities/user.entity';
 import { RegisterUserInput } from './dto/register-user.input';
-import { UpdateUserInput } from './dto/update-user.input copy';
+import { UpdateUserInput } from './dto/update-user.input';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable, map } from 'rxjs';
 
@@ -42,16 +42,20 @@ export class UserService {
     username,
     password,
   }: SignInUserInput): Promise<Observable<Token>> {
-    return this.operatorServiceClient
-      .send('signIn', { username, password })
-      .pipe(
-        map((response: any) => {
-          const token: Token = {
-            access_token: response.access_token,
-          };
-          return token;
-        }),
-      );
+    try {
+      return this.operatorServiceClient
+        .send('signIn', { username, password })
+        .pipe(
+          map((response: any) => {
+            const token: Token = {
+              access_token: response.access_token,
+            };
+            return token;
+          }),
+        );
+    } catch (error) {
+      throw new Error('Failed to sign in user');
+    }
   }
 
   async findSingleUser(
