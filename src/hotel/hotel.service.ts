@@ -24,48 +24,68 @@ export class HotelService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    try {
-      const findHotelData = await firstValueFrom(
-        this.hotelServiceClient.send('findAllHotels', {}) as Observable<
-          Record<string, any>[]
-        >,
-      );
+    if (process.env.SKIP_COLD_START !== 'true') {
+      try {
+        const findHotelData = await firstValueFrom(
+          this.hotelServiceClient.send('findAllHotels', {}) as Observable<
+            Record<string, any>[]
+          >,
+        );
 
-      if (findHotelData.length !== 0) {
-        return;
+        console.log({
+          findHotelData,
+          user: {
+            username: process.env.COLD_START_USER,
+            password: process.env.COLD_START_PASSWORD,
+            email: process.env.COLD_START_EMAIL,
+            role: process.env.COLD_START_ROLE,
+            service: process.env.COLD_START_SERVICE,
+            isAdmin: process.env.COLD_START_ROLE === 'admin',
+          },
+        });
+
+        if (findHotelData.length !== 0) {
+          return;
+        }
+
+        console.log({
+          URL: 'http://' + process.env.DATA_MAPPING_URI + ':3005/hotel',
+        });
+
+        const coldStartHotelList = (await this.axiosService.retryAxiosGet(
+          'http://' + process.env.DATA_MAPPING_URI + ':3005/hotel',
+        )) as Hotel[];
+        console.log({ coldStartHotelList });
+        const superuser = {
+          username: process.env.COLD_START_USER,
+          password: process.env.COLD_START_PASSWORD,
+          email: process.env.COLD_START_EMAIL,
+          role: process.env.COLD_START_ROLE,
+          service: process.env.COLD_START_SERVICE,
+          isAdmin: process.env.COLD_START_ROLE === 'admin',
+          hotels: coldStartHotelList,
+        };
+        console.log({ superuser, coldStartHotelList });
+        await firstValueFrom(
+          this.operatorServiceClient.send('coldStart', superuser).pipe(
+            map(async (response: any) => {
+              const { password, ...superUser } = response;
+              coldStartHotelList.forEach((hotel) => {
+                hotel.owner = superUser;
+              });
+              await firstValueFrom(
+                this.hotelServiceClient.send('hotelsColdStart', {
+                  createHotelInput: coldStartHotelList,
+                  owner: superUser,
+                }),
+              );
+              return response;
+            }),
+          ),
+        );
+      } catch (error) {
+        throw new error('Cold start failed', 500, error);
       }
-
-      const coldStartHotelList = (await this.axiosService.retryAxiosGet(
-        'http://localhost:3005/hotel',
-      )) as Hotel[];
-      const superuser = {
-        username: process.env.COLD_START_USER,
-        password: process.env.COLD_START_PASSWORD,
-        email: process.env.COLD_START_EMAIL,
-        role: process.env.COLD_START_ROLE,
-        service: process.env.COLD_START_SERVICE,
-        isAdmin: process.env.COLD_START_ROLE === 'admin',
-        hotels: coldStartHotelList,
-      };
-      await firstValueFrom(
-        this.operatorServiceClient.send('coldStart', superuser).pipe(
-          map(async (response: any) => {
-            const { password: _, ...superUser } = response;
-            coldStartHotelList.forEach((hotel) => {
-              hotel.owner = superUser;
-            });
-            await firstValueFrom(
-              this.hotelServiceClient.send('hotelsColdStart', {
-                createHotelInput: coldStartHotelList,
-                owner: superUser,
-              }),
-            );
-            return response;
-          }),
-        ),
-      );
-    } catch (error) {
-      throw new HttpException('Cold start failed', 500);
     }
   }
 

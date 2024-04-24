@@ -9,12 +9,13 @@ import { AxiosModule } from '../axios/axios.module';
 @Module({
   providers: [HotelResolver, HotelService],
   imports: [
+    ConfigModule,
     ClientsModule.register([
       {
         name: 'HOTEL_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
+          host: process.env.HOTEL_SERVICE_HOST || 'localhost',
           port: 3032,
         },
       },
@@ -22,12 +23,11 @@ import { AxiosModule } from '../axios/axios.module';
         name: 'OPERATOR_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
+          host: process.env.OPERATOR_SERVICE_HOST || 'localhost',
           port: 3031,
         },
       },
     ]),
-    ConfigModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),

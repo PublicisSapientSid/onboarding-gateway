@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -22,7 +23,7 @@ import { ConfigModule } from '@nestjs/config';
         name: 'OPERATOR_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
+          host: process.env.OPERATOR_SERVICE_HOST || 'localhost',
           port: 3031,
         },
       },
@@ -30,13 +31,12 @@ import { ConfigModule } from '@nestjs/config';
         name: 'HOTEL_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
+          host: process.env.HOTEL_SERVICE_HOST || 'localhost',
           port: 3032,
         },
       },
     ]),
     HotelModule,
-    ConfigModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],
