@@ -8,10 +8,14 @@ import { join } from 'path';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { HotelModule } from './hotel/hotel.module';
 import { ConfigModule } from '@nestjs/config';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './logging.interceptor';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    PrometheusModule.register(),
     UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -39,6 +43,12 @@ import { ConfigModule } from '@nestjs/config';
     HotelModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
 export class AppModule {}
